@@ -1,12 +1,17 @@
 # Beneficiary Management Working Group
 
+> **NOTE:** This repository is for the working group to use while drafting documentation and specifications before they are formally ratified.  Users outside of the working group should not begin implementing solutions based on the content in this repository as it is likely to change without notice.
+
 Focused on enabling real time Beneficiary changes accross accounts.
 
-## Get started
+## Draft API Specifications
 
-Please refer to the [Digital-First-Specifications](https://github.com/Insured-Retirement-Institute/Digital-First-Specifications) repository for technical governance of standards, data dictionary, and the code of conduct.
+The working group's draft OpenAPI specification is in the [draft-api-specs](./draft-api-specs) directory.  See [README.md](draft-api-specs/README.md) for more details.
 
 ## Business Case
+
+The working group's draft business case documentation is available in this repository. Once the documentation is finalized, it will be formally published on the [IRI DFA Library of Standards](https://www.irionline.org/member-programs/operations-technology/digital-first-library-standards/).
+
 Objectives
 - Enable a unified method for multiple beneficiary updates at once
 - Seamless User Experience: Simplified, intuitive interface
