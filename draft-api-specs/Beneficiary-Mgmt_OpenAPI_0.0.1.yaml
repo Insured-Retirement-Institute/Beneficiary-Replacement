@@ -263,6 +263,18 @@ components:
           enum:
             - REPLACE_BENEFICIARY
           description: Type of beneficiary action. REPLACE_BENEFICIARY indicates replace-all semantics (existing beneficiaries are removed).
+        beneficiaryTypesInScope:
+          type: array
+          uniqueItems: true
+          description: 
+            Defines the beneficiary types that are intended to be replaced by this request. Only the beneficiaryTypes included in this array are updated. Existing beneficiaryTypes not included remain unchanged. If not provided, consumers SHALL infer the scope from the beneficiaryTypes present in the payload.Values in this array MUST be unique.
+          items:
+            type: string
+            enum:
+              - PRIMARY
+              - CONTINGENT
+              - TERTIARY
+          minItems: 1 
         contract:
           $ref: '#/components/schemas/Contract'
           description: Policy contract information (contract number and optional associated firm ID).
@@ -428,22 +440,62 @@ components:
           description: Classification of beneficiary (PRIMARY, CONTINGENT, or TERTIARY).
         relationshipType:
           type: string
+          description: Standardized relationship classification aligned with DTCC Contract Entity Relationship codes. 			
           enum:
-            - SPOUSE
-            - DOMESTIC_PARTNER
-            - PARENT
-            - SIBLING
-            - CHILD
-            - GRANDCHILD
-            - OTHER_PERSON
-            - TRUST
-            - ESTATE
-            - ORGANIZATION
-          description: Standardized Relationship of the beneficiary to the annuitant or contract owner (e.g., spouse, child, sibling).
+          - PARENT
+          - CHILD
+          - FATHER
+          - MOTHER
+          - SON
+          - DAUGHTER
+          - BROTHER
+          - SISTER
+          - EX_HUSBAND
+          - EX_WIFE
+          - STEP_MOTHER
+          - STEP_FATHER
+          - STEP_BROTHER
+          - STEP_SISTER
+          - GRANDFATHER
+          - GRANDMOTHER
+          - FATHER_IN_LAW
+          - SIBLING
+          - SON_IN_LAW
+          - DAUGHTER_IN_LAW
+          - BROTHER_IN_LAW
+          - SISTER_IN_LAW
+          - DOMESTIC_PARTNER
+          - HALF_SISTER
+          - COUSIN
+          - SIGNIFICANT_OTHER
+          - AUNT
+          - NEPHEW
+          - NIECE
+          - SPOUSE
+          - HUSBAND
+          - WIFE
+          - MOTHER_IN_LAW
+          - HALF_BROTHER
+          - UNCLE
+          - DEPENDENT
+          - EMPLOYEE
+          - EMPLOYER
+          - FIANCEE
+          - FOSTER_PARENT
+          - FRIEND
+          - GRAND_CHILD
+          - GRAND_PARENT
+          - GUARDIAN
+          - TRUSTEE
+          - OTHER
+          - OTHER_FAMILY
+          - SELF
+          - ALL_RELATIONSHIPS_ACCEPTABLE
+          - ALL_BUT_SELF
         relationshipDescription:
           type: string
           maxLength: 180
-          description: Free-form description of relationship when relationshipType is OTHER or additional detail is required.
+          description: Free-form description of relationship when relationshipType is OTHER, OTHER_FAMILY or additional detail is required.
         designationAmountType:
           type: string
           enum:
