@@ -147,7 +147,6 @@ components:
   schemas:
     EventEnvelopeBase:
       type: object
-      additionalProperties: false
       required:
         - eventId
         - eventType
@@ -189,7 +188,6 @@ components:
       allOf:
         - $ref: '#/components/schemas/EventEnvelopeBase'
         - type: object
-          additionalProperties: false
           properties:
             eventType:
               type: string
@@ -216,7 +214,6 @@ components:
 
     BeneficiaryEventBase:
       type: object
-      additionalProperties: false
       required:
         - beneficiaryEventId
         - beneficiaryTransactionId
@@ -224,7 +221,6 @@ components:
         - sourceSystem
         - processedTimestamp
         - contract
-        - beneficiaryAction
         - beneficiaries
       properties:
         beneficiaryEventId:
@@ -258,11 +254,6 @@ components:
         requestorContext:
           $ref: '#/components/schemas/RequestorContext'
           description: Context about the role and authority under which the beneficiary change was requested. Primarily applicable to PROPOSED events; may be echoed on BOOKED or REJECTED outcomes.
-        beneficiaryAction:
-          type: string
-          enum:
-            - REPLACE_BENEFICIARY
-          description: Type of beneficiary action. REPLACE_BENEFICIARY indicates replace-all semantics (existing beneficiaries are removed).
         beneficiaryTypesInScope:
           type: array
           uniqueItems: true
@@ -273,7 +264,6 @@ components:
             enum:
               - PRIMARY
               - CONTINGENT
-              - TERTIARY
           minItems: 1 
         contract:
           $ref: '#/components/schemas/Contract'
@@ -338,7 +328,6 @@ components:
             - OWNER
             - POWER_OF_ATTORNEY
             - TRUSTEE
-            - ANNUITANT
             - AUTHORIZED_REPRESENTATIVE
         authorityType:
           type: string
@@ -425,7 +414,6 @@ components:
       required:
         - beneficiaryType
         - relationshipType
-        - designationAmountType
         - name
       properties:
         beneficiaryId:
@@ -436,8 +424,7 @@ components:
           enum:
             - PRIMARY
             - CONTINGENT
-            - TERTIARY
-          description: Classification of beneficiary (PRIMARY, CONTINGENT, or TERTIARY).
+          description: Classification of beneficiary (PRIMARY or CONTINGENT).
         relationshipType:
           type: string
           description: Standardized relationship classification aligned with DTCC Contract Entity Relationship codes. 			
@@ -496,12 +483,6 @@ components:
           type: string
           maxLength: 180
           description: Free-form description of relationship when relationshipType is OTHER, OTHER_FAMILY or additional detail is required.
-        designationAmountType:
-          type: string
-          enum:
-            - PERCENT
-            - EQUAL_SHARES
-          description: Method for specifying the beneficiary''s benefit amount (PERCENT = percentage of contract value; EQUAL_SHARES = equal division among beneficiaries of same type).
         designationSuccessionType:
           type: string
           enum:
@@ -512,7 +493,7 @@ components:
           type: number
           minimum: 0
           maximum: 100
-          description: Percentage of contract value allocated to this beneficiary. Required when designationAmountType is PERCENT.
+          description: Percentage of contract value allocated to this beneficiary.
         isIrrevocable:
           type: boolean
           description: Indicates whether this beneficiary designation is irrevocable (cannot be changed without beneficiary consent).
@@ -581,6 +562,7 @@ components:
         - addressLine1
         - city
         - state
+        - Country
         - zipCode
       properties:
         addressId:
