@@ -147,7 +147,6 @@ components:
   schemas:
     EventEnvelopeBase:
       type: object
-      additionalProperties: false
       required:
         - eventId
         - eventType
@@ -189,7 +188,6 @@ components:
       allOf:
         - $ref: '#/components/schemas/EventEnvelopeBase'
         - type: object
-          additionalProperties: false
           properties:
             eventType:
               type: string
@@ -199,6 +197,8 @@ components:
                 - insurance.annuity.beneficiary.rejected.v1
               description: Type of beneficiary event (PROPOSED, BOOKED, or REJECTED).
             payload:
+              type: object
+              description: Domain-specific payload containing business data. Concrete shape is defined by domain-specific envelopes (e.g., BeneficiaryEvent).  
               $ref: '#/components/schemas/BeneficiaryEvent'
 
     BeneficiaryEvent:
@@ -216,7 +216,6 @@ components:
 
     BeneficiaryEventBase:
       type: object
-      additionalProperties: false
       required:
         - beneficiaryEventId
         - beneficiaryTransactionId
@@ -224,7 +223,6 @@ components:
         - sourceSystem
         - processedTimestamp
         - contract
-        - beneficiaryAction
         - beneficiaries
       properties:
         beneficiaryEventId:
@@ -240,7 +238,13 @@ components:
             - PROPOSED
             - BOOKED
             - REJECTED
-          description: Type of beneficiary event. PROPOSED = new proposal submitted; BOOKED = proposal accepted; REJECTED = proposal declined.
+          description: |
+            Business classification of the beneficiary event.
+            SHALL correspond to the eventType in the enclosing event envelope according to the following mapping:
+              insurance.annuity.beneficiary.proposed.v1 -> PROPOSED
+              insurance.annuity.beneficiary.booked.v1 -> BOOKED
+              insurance.annuity.beneficiary.rejected.v1 -> REJECTED
+            Receivers SHALL reject events where eventType and beneficiaryEventType are inconsistent.
         sourceSystem:
           type: string
           enum:
@@ -257,12 +261,7 @@ components:
           description: Effective date of the beneficiary change. Optional; carrier is authoritative when present.
         requestorContext:
           $ref: '#/components/schemas/RequestorContext'
-          description: Context about the role and authority under which the beneficiary change was requested. Primarily applicable to PROPOSED events; may be echoed on BOOKED or REJECTED outcomes.
-        beneficiaryAction:
-          type: string
-          enum:
-            - REPLACE_BENEFICIARY
-          description: Type of beneficiary action. REPLACE_BENEFICIARY indicates replace-all semantics (existing beneficiaries are removed).
+          description: Context about the role and authority under which the beneficiary change was requested. requestorContext SHALL be present for PROPOSED events and MAY be omitted for BOOKED and REJECTED events.
         beneficiaryTypesInScope:
           type: array
           uniqueItems: true
@@ -273,7 +272,6 @@ components:
             enum:
               - PRIMARY
               - CONTINGENT
-              - TERTIARY
           minItems: 1 
         contract:
           $ref: '#/components/schemas/Contract'
@@ -338,7 +336,6 @@ components:
             - OWNER
             - POWER_OF_ATTORNEY
             - TRUSTEE
-            - ANNUITANT
             - AUTHORIZED_REPRESENTATIVE
         authorityType:
           type: string
@@ -425,7 +422,7 @@ components:
       required:
         - beneficiaryType
         - relationshipType
-        - designationAmountType
+        - percent
         - name
       properties:
         beneficiaryId:
@@ -436,8 +433,7 @@ components:
           enum:
             - PRIMARY
             - CONTINGENT
-            - TERTIARY
-          description: Classification of beneficiary (PRIMARY, CONTINGENT, or TERTIARY).
+          description: Classification of beneficiary (PRIMARY, CONTINGENT).
         relationshipType:
           type: string
           description: Standardized relationship classification aligned with DTCC Contract Entity Relationship codes. 			
@@ -496,12 +492,6 @@ components:
           type: string
           maxLength: 180
           description: Free-form description of relationship when relationshipType is OTHER, OTHER_FAMILY or additional detail is required.
-        designationAmountType:
-          type: string
-          enum:
-            - PERCENT
-            - EQUAL_SHARES
-          description: Method for specifying the beneficiary''s benefit amount (PERCENT = percentage of contract value; EQUAL_SHARES = equal division among beneficiaries of same type).
         designationSuccessionType:
           type: string
           enum:
@@ -512,7 +502,7 @@ components:
           type: number
           minimum: 0
           maximum: 100
-          description: Percentage of contract value allocated to this beneficiary. Required when designationAmountType is PERCENT.
+          description: Percentage of contract value allocated to this beneficiary.
         isIrrevocable:
           type: boolean
           description: Indicates whether this beneficiary designation is irrevocable (cannot be changed without beneficiary consent).
@@ -582,6 +572,7 @@ components:
         - city
         - state
         - zipCode
+        - country
       properties:
         addressId:
           type: string
